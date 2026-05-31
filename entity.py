@@ -31,7 +31,7 @@ class Entity:
         self.arr = [float('inf')] * number_entities
         self.arr[self.index] = 0
         #this keeps track of the next niehboors:
-        self.next_arr = [None] * number_entities
+        self.next_arr = [self.index] * number_entities
         self.next_arr[self.index] = self.index
 
     def initialize_costs(self, neighbor_costs):
@@ -68,6 +68,7 @@ class Entity:
         '''
         new_l = []
         past = self.arr[:]
+        cost_s = self.arr[pkt.get_source()]
         for i in range(len(self.arr)):
             new_c = self.arr[pkt.get_source()] + pkt.get_costs()[i]
             self.arr[i] = min(self.arr[i], self.arr[pkt.get_source()] + pkt.get_costs()[i])
