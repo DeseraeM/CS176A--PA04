@@ -70,8 +70,8 @@ class Entity:
         past = self.arr[:]
         cost_s = self.arr[pkt.get_source()]
         for i in range(len(self.arr)):
-            new_c = self.arr[pkt.get_source()] + pkt.get_costs()[i]
-            self.arr[i] = min(self.arr[i], self.arr[pkt.get_source()] + pkt.get_costs()[i])
+            new_c = cost_s + pkt.get_costs()[i]
+            self.arr[i] = min(self.arr[i], cost_s + pkt.get_costs()[i])
             if new_c < past[i]:
                 self.next_arr[i] = pkt.get_source() 
         if past != self.arr:
