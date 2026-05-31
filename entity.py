@@ -82,7 +82,7 @@ class Entity:
             new_c = cost_s + pkt.get_costs()[i]
             if new_c < self.arr[i]:
                 self.arr[i] = new_c
-                self.next_arr[i] = self.next_arr[old_source]
+                self.next_arr[i] = old_source
         if past != self.arr:
             for j in range(len(self.neighbor_costs)):
                 neighbor, c = self.neighbor_costs[j]
