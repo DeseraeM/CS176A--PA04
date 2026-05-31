@@ -51,6 +51,9 @@ class Entity:
         for i in range(len(neighbor_costs)):
             neighbor, c = neighbor_costs[i]
             self.arr[neighbor] = c
+        
+        for j in range(len(neighbor_costs)):
+            neighbor,c = neighbor_costs[j]
             n_packet = packet.Packet(neighbor, self.arr)
             new_list.append(n_packet)
             self.next_arr[neighbor] = neighbor
@@ -79,6 +82,7 @@ class Entity:
                 neighbor, c = self.neighbor_costs[j]
                 n_packet = packet.Packet(neighbor, self.arr)
                 new_l.append(n_packet)
+        print(f"Updating node {i}: new_c={new_c}, current={self.arr[i]}")
         return new_l
 
     def get_all_costs(self):
@@ -108,7 +112,5 @@ class Entity:
         Return Value: The index of the best neighboring entity to use as the
         next hop.
         '''
-        for i in range( len(self.arr)):
-            if self.next_arr[i] == destination:
-                return self.next_arr[destination]
+        return self.next_arr[destination]
 
