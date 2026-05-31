@@ -71,16 +71,17 @@ class Entity:
         '''
         new_l = []
         past = self.arr[:]
-        cost_s = self.arr[pkt.get_source()]
+        old_source = pkt.get_source()
+        cost_s = self.arr[old_source]
         for i in range(len(self.arr)):
             new_c = cost_s + pkt.get_costs()[i]
-            self.arr[i] = min(self.arr[i], cost_s + pkt.get_costs()[i])
-            if new_c < past[i]:
-                self.next_arr[i] = pkt.get_source() 
+            if new_c < self.arr[i]:
+                self.arr[i] = new_c
+                self.next_arr[i] = self.next_arr[old_source]
         if past != self.arr:
             for j in range(len(self.neighbor_costs)):
                 neighbor, c = self.neighbor_costs[j]
-                n_packet = packet.Packet(neighbor, self.arr)
+                n_packet = packet.Packet(self.index, self.arr)
                 new_l.append(n_packet)
         return new_l
 
