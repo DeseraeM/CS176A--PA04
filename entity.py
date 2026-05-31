@@ -52,7 +52,7 @@ class Entity:
             neighbor, c = neighbor_costs[i]
             self.arr[neighbor] = c
             n_packet = packet.Packet(neighbor, self.arr)
-            new_list.append(packet)
+            new_list.append(n_packet)
             self.next_arr[neighbor] = neighbor
         return new_list
 
@@ -77,7 +77,7 @@ class Entity:
             for j in range(len(self.neighbor_costs)):
                 neighbor, c = self.neighbor_costs[j]
                 n_packet = packet.Packet(neighbor, self.arr)
-                new_l.append(packet)
+                new_l.append(n_packet)
         return new_l
 
     def get_all_costs(self):
