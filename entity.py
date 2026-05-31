@@ -30,9 +30,9 @@ class Entity:
         #this keeps track of the rest of the distances but bc we don't know them it is set to infinity
         self.arr = [float('inf')] * number_entities
         self.arr[self.index] = 0
-        #this keeps track of the distance from the current node
         #this keeps track of the next niehboors:
         self.next_arr = [None] * number_entities
+        self.next_arr[self.index] = self.index
 
     def initialize_costs(self, neighbor_costs):
         '''
