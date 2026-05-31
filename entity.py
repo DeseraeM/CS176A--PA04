@@ -82,7 +82,6 @@ class Entity:
                 neighbor, c = self.neighbor_costs[j]
                 n_packet = packet.Packet(neighbor, self.arr)
                 new_l.append(n_packet)
-        print(f"Updating node {i}: new_c={new_c}, current={self.arr[i]}")
         return new_l
 
     def get_all_costs(self):
