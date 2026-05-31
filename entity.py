@@ -72,7 +72,12 @@ class Entity:
         new_l = []
         past = self.arr[:]
         old_source = pkt.get_source()
+
         cost_s = self.arr[old_source]
+        for neighbor, c in self.neighbor_costs:
+            if neighbor == old_source:
+                cost_s = c
+                break
         for i in range(len(self.arr)):
             new_c = cost_s + pkt.get_costs()[i]
             if new_c < self.arr[i]:
