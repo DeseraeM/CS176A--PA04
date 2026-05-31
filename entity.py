@@ -81,7 +81,7 @@ class Entity:
         if past != self.arr:
             for j in range(len(self.neighbor_costs)):
                 neighbor, c = self.neighbor_costs[j]
-                n_packet = packet.Packet(self.index, self.arr)
+                n_packet = packet.Packet(neighbor, self.arr)
                 new_l.append(n_packet)
         return new_l
 
