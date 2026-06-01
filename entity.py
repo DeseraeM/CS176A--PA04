@@ -33,6 +33,7 @@ class Entity:
         #this keeps track of the next niehboors:
         self.next_arr = [self.index] * number_entities
         self.next_arr[self.index] = self.index
+        self.dist_table = [{} for _ in range(number_entities)]
 
     def initialize_costs(self, neighbor_costs):
         '''
@@ -51,6 +52,7 @@ class Entity:
         for i in range(len(neighbor_costs)):
             neighbor, c = neighbor_costs[i]
             self.arr[neighbor] = c
+            self.dist_table[neighbor][neighbor] = c
         
         for j in range(len(neighbor_costs)):
             neighbor,c = neighbor_costs[j]
@@ -70,19 +72,20 @@ class Entity:
         sent from this entity (if any) to neighboring entities.
         '''
         new_l = []
-        past = self.arr[:]
         old_source = pkt.get_source()
-
         cost_s = self.arr[old_source]
-        for neighbor, c in self.neighbor_costs:
-            if neighbor == old_source:
-                cost_s = c
-                break
+        for i in range(self.number_of_entities):
+            self.dist_table[i][old_source] = cost_s + pkt.get_costs()[i]
+
+        past = self.arr[:]
         for i in range(len(self.arr)):
-            new_c = cost_s + pkt.get_costs()[i]
-            if new_c < self.arr[i]:
-                self.arr[i] = new_c
-                self.next_arr[i] = old_source
+            if i == self.index:
+                continue
+            for neighbor, c in self.neighbor_costs:
+                via = self.dist_table[i].get(neighbor, float('inf'))
+                if via < self.arr[i] or (via == self.arr[i] and neighbor < self.next_arr[i]):
+                    self.arr[i] = via
+                    self.next_arr[i] = neighbor
         if past != self.arr:
             for j in range(len(self.neighbor_costs)):
                 neighbor, c = self.neighbor_costs[j]
