@@ -33,8 +33,9 @@ class Entity:
         #this keeps track of the next niehboors:
         self.next_arr = [self.index] * number_entities
         self.next_arr[self.index] = self.index
-        self.dist_table = [{} for _ in range(number_entities)]
 
+        self.neighbor = {}
+        self.dis_t = [{} for _ in range(number_entities)]
     def initialize_costs(self, neighbor_costs):
         '''
         This function will be called at the beginning of the simulation to
@@ -49,16 +50,15 @@ class Entity:
         '''
         self.neighbor_costs = neighbor_costs
         new_list = []
-        for i in range(len(neighbor_costs)):
-            neighbor, c = neighbor_costs[i]
+        for neighbor, c in neighbor_costs:
             self.arr[neighbor] = c
-            self.dist_table[neighbor][neighbor] = c
-        
-        for j in range(len(neighbor_costs)):
-            neighbor,c = neighbor_costs[j]
+            self.next_arr[neighbor] = neighbor
+            self.neighbor[neighbor] = c
+            self.dis_t[neighbor][neighbor] = c
+
+        for neighbor, c in neighbor_costs:
             n_packet = packet.Packet(neighbor, self.arr)
             new_list.append(n_packet)
-            self.next_arr[neighbor] = neighbor
         return new_list
 
     def update(self, pkt):
@@ -72,29 +72,33 @@ class Entity:
         sent from this entity (if any) to neighboring entities.
         '''
         new_l = []
-        old_source = pkt.get_source()
-        cost_s = self.arr[old_source]
-        for i in range(self.number_of_entities):
-            self.dist_table[i][old_source] = cost_s + pkt.get_costs()[i]
-
         past = self.arr[:]
-        for i in range(len(self.arr)):
+        old_source = pkt.get_source()
+        r = pkt.get_costs()
+        cost_s = next(c for neighbor, c in self.neighbor_costs if neighbor == old_source)
+
+        for i in range(self.number_of_entities):
+            total = cost_s + r[i]
+            if total > 999:
+                total = 999
+            self.dis_t[i][old_source] = total
+
+        for i in range(self.number_of_entities):
             if i == self.index:
                 continue
-            best_cost = float('inf')
-            best_hop = self.next_arr[i]
+            best = float('inf')
+            best_h = None
             for neighbor, c in self.neighbor_costs:
-                via = self.dist_table[i].get(neighbor, float('inf'))
-                if via < best_cost:
-                    best_cost = via
-                    best_hop = neighbor
-            self.arr[i] = best_cost        
-            self.next_arr[i] = best_hop
+                total = self.dis_t[i].get(neighbor, float('inf'))
+                if total < best:
+                    best = total
+                    best_h = neighbor
+            if best_h is not None:
+                self.arr[i] = best
+                self.next_arr[i] = best_h
         if past != self.arr:
-            for j in range(len(self.neighbor_costs)):
-                neighbor, c = self.neighbor_costs[j]
-                n_packet = packet.Packet(neighbor, self.arr)
-                new_l.append(n_packet)
+            for neighbor, c in self.neighbor_costs:
+                new_l.append(packet.Packet(neighbor, self.arr))
         return new_l
 
     def get_all_costs(self):
