@@ -81,11 +81,15 @@ class Entity:
         for i in range(len(self.arr)):
             if i == self.index:
                 continue
+            best_cost = float('inf')
+            best_hop = self.next_arr[i]
             for neighbor, c in self.neighbor_costs:
                 via = self.dist_table[i].get(neighbor, float('inf'))
-                if via < self.arr[i] or (via == self.arr[i] and neighbor < self.next_arr[i]):
-                    self.arr[i] = via
-                    self.next_arr[i] = neighbor
+                if via < best_cost:
+                    best_cost = via
+                    best_hop = neighbor
+            self.arr[i] = best_cost        
+            self.next_arr[i] = best_hop
         if past != self.arr:
             for j in range(len(self.neighbor_costs)):
                 neighbor, c = self.neighbor_costs[j]
